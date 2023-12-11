@@ -1,7 +1,7 @@
 ---
 author: Miloshinjo
 pubDatetime: 2023-12-10T22:22:00Z
-title: Basic Redux reverse engineered
+title: Reverse engineering Redux
 postSlug: recreate-redux
 featured: true
 draft: false
@@ -28,35 +28,53 @@ In our store, we need **state**, ability to **get state** and the ability to **u
 ```ts
 // index.ts
 
+// Basic state type
+type State = {
+  count: number;
+};
+
+// Basic Action type
+type Action = {
+  type: string;
+  payload?: any;
+};
+
+// Basic reducer type
+type Reducer = (state: State, action: Action | null) => State;
+
+// We have to provide our initial state for the app
+const defaultState: State = {
+  count: 0,
+};
+
 // We need to pass a reducer function as an argument
 // Real redux will take many arguments,
 // but we are going for simplicity here
-function createStore(reducer) {
+function createStore(
+  reducer: Reducer
+): [() => State, (action: Action) => void] {
   // ⓵ INITIALIZE THE STATE
-  let state;
+  let state: State = reducer(defaultState, {
+    type: null,
+  });
 
   // ⓶ ABILITY TO GET STATE
-  const getState = () => state;
+  function getState(): State {
+    return state;
+  }
 
   // ⓷  UPDATE THE STATE
   // we update the state using dispatch function
   // dispatch will just update the state
-  //  by calling the reducer function
-  const dispatch = (action = { type: null }) => {
-    // this piece of code is for empty actions
-    // they will return the default state
-    if (!action) {
-      state = reducer();
-      return;
-    }
+  // by calling the reducer function
+  function dispatch(action: Action) {
     // invoke the reducer and return the new state
     state = reducer(state, action);
-  };
+  }
 
-  return {
-    getState,
-    dispatch
-  };
+  // We return an array with 2 values - 1. getState,
+  // and the 2. dispatch function for our actions.
+  return [getState, dispatch];
 }
 ```
 
@@ -65,35 +83,58 @@ function createStore(reducer) {
 Now we can use our redux store using this code and use some basic redux actions.
 
 ```ts
-// basic reducer function
-const counterReducer = function(state = 0, action) {
-  if (action.type === 'INCREMENT') {
-    return state + 1;
-  } else if (action.type === 'DECREMENT') {
-    return state - 1;
+// index.ts
+
+// Here we implement the reducer function that will
+// be responsible for our state changes
+const counterReducer = function (state: State, action: Action) {
+  switch (action.type) {
+    case 'INCREMENT': {
+      return {
+        ...state,
+        count: state.count + 1,
+      };
+    }
+    case 'DECREMENT': {
+      return {
+        ...state,
+        count: state.count - 1,
+      };
+    }
+    // Always return previous state as if
+    // action type is not defined
+    default: {
+      return state;
+    }
   }
-  // always return state as default
-  return state;
 };
 
-const store = createStore(counterReducer);
+// Initiate our store
+const [getState, dispatch] = createStore(counterReducer);
 
-// dispatch an empty action when
-// initializing store to set the default state
-// this is done under the hood, so I am using this workaround
-store.dispatch();
+// Check for our state value
+console.log(getState()); // { count: 0 }
 
-console.log(store.getState()); // 0
+// Dispatch an INCREMENT action
+dispatch({ type: 'INCREMENT' });
 
-store.dispatch({ type: 'INCREMENT' });
+// Check for our state value again
+console.log(getState()); // { count: 1 }
 
-console.log(store.getState()); // 1
+// Dispatch another INCREMENT action
+dispatch({ type: 'INCREMENT' });
 
-store.dispatch({ type: 'INCREMENT' });
+// Check for our state value again
+console.log(getState()); // { count: 2 }
 
-console.log(store.getState()); // 2
+// Dispatch a DECREMENT action
+dispatch({ type: 'DECREMENT' });
+
+// Check for our state value again
+console.log(getState()); // { count: 1 }
+
 ```
 
 This is very very basic redux implementation, which is meant to be a small coding excercise to try and recreate how a popular library works under the hood. The real implementation can be found on their github page.
 
-P.S. If anyone knows a better way to read the default state from a reducer without invoking the `store.dispatch()`, please write to me and I'll change it here 😀
+Thanks for reading.😊
