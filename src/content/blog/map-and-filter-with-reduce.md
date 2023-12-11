@@ -164,4 +164,6 @@ The goal of this excercise was to help us understand the power of **.reduce**. I
 
 So next time you have a big array problem in your code and you are looking for a solution, try using **.reduce**.
 
+You can play around with the exercise yourself using this [StackBlitz URL](https://stackblitz.com/edit/map-and-filter-with-reduce?file=index.ts).
+
 Thanks for reading.😊

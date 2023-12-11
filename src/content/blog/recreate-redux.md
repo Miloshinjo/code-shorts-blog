@@ -10,12 +10,14 @@ tags:
   - typescript
   - reverse-engineering
 description:
-  We'll be recreating the basic idea of the redux library, mostly used with React application.
+  We'll be recreating the basic idea of the redux library, mostly used with React applications.
 ---
 
-Few years ago, when I was learning **redux**, we had an exercise to recreate it from scratch. The main intent was to learn how it works under the hood. I figured I'd do that again, since it was really fun and helped me understand how redux works under the hood.
+Several years ago, when I was learning **redux**, we had an exercise to recreate it from scratch. The main intent was to learn how it works under the hood. I figured I'd do that again, since it was really fun and helped me understand how redux works under the hood.
 
 I will assume you know about **reducers** and **actions** and have used redux before. So this is just an excercise in showing how redux might be set up under the hood.
+
+> Redux fell out of favor a bit lately, and is now kinda integrated in React with `useReducer` hook. Still, this is a good coding exercise to do.
 
 ## Creating the Store
 
@@ -35,7 +37,7 @@ type State = {
 
 // Basic Action type
 type Action = {
-  type: string;
+  type: string | null;
   payload?: any;
 };
 
@@ -136,5 +138,7 @@ console.log(getState()); // { count: 1 }
 ```
 
 This is very very basic redux implementation, which is meant to be a small coding excercise to try and recreate how a popular library works under the hood. The real implementation can be found on their github page.
+
+You can play around with the exercise yourself using this [StackBlitz URL](https://stackblitz.com/edit/typescript-ssfb2t?file=index.ts).
 
 Thanks for reading.😊
