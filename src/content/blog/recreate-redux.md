@@ -13,7 +13,6 @@ description:
   We'll be recreating the basic idea of the redux library, mostly used with React application.
 ---
 
-
 Few years ago, when I was learning **redux**, we had an exercise to recreate it from scratch. The main intent was to learn how it works under the hood. I figured I'd do that again, since it was really fun and helped me understand how redux works under the hood.
 
 I will assume you know about **reducers** and **actions** and have used redux before. So this is just an excercise in showing how redux might be set up under the hood.
